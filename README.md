@@ -1,39 +1,46 @@
 # LogSift C++
 
-A fast command-line tool for parsing, filtering, aggregating, and inspecting large log files.
+A C++20 multithreaded command-line log analyzer built to demonstrate systems-oriented programming, concurrency, parsing, CMake, tests, and cross-platform CI.
 
-## Why this project
+## Features
 
-LogSift demonstrates practical modern C++ engineering:
+- Parses timestamp / severity / message records
+- Counts log levels concurrently using a worker pool pattern
+- Separates malformed input instead of crashing
+- Deterministic summary output
+- CMake build
+- Unit-style parser tests
+- GitHub Actions on Linux and Windows
 
-- streaming file processing
-- explicit performance and memory tradeoffs
-- robust parsing and malformed-input handling
-- composable filters and aggregations
-- automated tests and benchmarks
-- portable command-line packaging
+## Build
 
-## Planned stack
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure
+```
 
-- C++20
-- CMake
-- Catch2 or GoogleTest
-- CLI11
-- GitHub Actions
+## Run
 
-## Initial capabilities
+```bash
+./build/logsift examples/sample.log
+```
 
-1. Stream logs without loading the entire file into memory.
-2. Filter by severity, timestamp range, source, and text pattern.
-3. Aggregate counts and latency statistics.
-4. Support structured JSON logs and a configurable plain-text format.
-5. Export results as terminal output, JSON, or CSV.
-6. Report malformed records without crashing the whole run.
+Expected summary:
 
-## Quality bar
+```text
+lines=5
+ERROR=1
+INFO=2
+WARN=1
+INVALID=1
+```
 
-The project should include reproducible benchmarks, documented complexity, representative fixtures, and tests for malformed and boundary-case input.
+## Engineering extensions
 
-## Status
-
-CLI architecture and implementation are in progress.
+- Stream very large files instead of loading them entirely into memory
+- Add time-range and regex filtering
+- Aggregate repeated error signatures
+- Add JSON/CSV output
+- Benchmark single-thread vs multi-thread throughput
+- Add bounded producer/consumer queues
